@@ -14,7 +14,8 @@ class KadeeSender implements Sender
 {
     public function __construct(
         private readonly string $projectId,
-        private readonly string $endpoint = 'https://kadee.io/api/ingest',
+        private readonly string $secret,
+        private readonly string $endpoint = 'https://usekadee.com/api/ingest',
         private readonly int $timeout = 5,
     ) {}
 
@@ -40,7 +41,7 @@ class KadeeSender implements Sender
             return;
         }
 
-        $signature = hash_hmac('sha256', $body, $this->projectId);
+        $signature = hash_hmac('sha256', $body, $this->secret);
 
         try {
             $ch = $this->createCurlHandle($body, $signature);

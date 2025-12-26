@@ -17,7 +17,7 @@ class Kadee
      */
     public static function make(
         string $projectId,
-        string $endpoint = 'https://kadee.io/api/ingest'
+        string $endpoint = 'https://usekadee.com/api/ingest'
     ): Flare {
         $config = FlareConfig::make('kadee')
             ->sendUsing(KadeeSender::class, [

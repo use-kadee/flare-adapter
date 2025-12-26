@@ -3,10 +3,21 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Kadee Project Key
+    | Kadee Project ID
     |--------------------------------------------------------------------------
     |
-    | Your Kadee project identifier. Get this from your Kadee dashboard.
+    | Your Kadee project identifier (UUID). Get this from your Kadee dashboard.
+    |
+    */
+    'project' => env('KADEE_PROJECT'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Kadee Secret Key
+    |--------------------------------------------------------------------------
+    |
+    | Your Kadee project secret for signing requests. Get this from your
+    | Kadee dashboard. This is used to authenticate error reports.
     |
     */
     'key' => env('KADEE_KEY'),
@@ -19,7 +30,7 @@ return [
     | The endpoint where error reports are sent.
     |
     */
-    'endpoint' => env('KADEE_ENDPOINT', 'https://kadee.io/api/ingest'),
+    'endpoint' => env('KADEE_ENDPOINT', 'https://usekadee.com/api/ingest'),
 
     /*
     |--------------------------------------------------------------------------

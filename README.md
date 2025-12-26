@@ -1,37 +1,31 @@
 # Kadee Flare Adapter
 
-Send Flare error reports to [Kadee](https://kadee.io) for AI-powered fixing.
+Send Flare error reports to [Kadee](https://usekadee.com) for AI-powered fixing.
 
 ## Installation
 
 ```bash
-composer require use-kadee/flare-adapter
+composer require spatie/laravel-flare use-kadee/flare-adapter
 ```
 
 ## Laravel Usage
 
-1. Add your Kadee project key to `.env`:
-
-```env
-KADEE_KEY=your-project-uuid
-```
-
-2. That's it! The package auto-configures via Laravel's service provider.
-
-## Base PHP Usage
+1. Register Flare in your `bootstrap/app.php`:
 
 ```php
-<?php
-
-require 'vendor/autoload.php';
-
-use Kadee\FlareAdapter\Kadee;
-
-Kadee::make('your-project-uuid')
-    ->registerFlareHandlers();
-
-// Your app code...
+->withExceptions(function (Exceptions $exceptions) {
+    \Spatie\LaravelFlare\Facades\Flare::handles($exceptions);
+})->create();
 ```
+
+2. Add your Kadee credentials to `.env`:
+
+```env
+KADEE_PROJECT=your-project-uuid
+KADEE_KEY=your-project-secret
+```
+
+3. That's it! The package auto-configures via Laravel's service provider.
 
 ## Configuration
 
@@ -45,8 +39,9 @@ Available options:
 
 ```php
 return [
+    'project' => env('KADEE_PROJECT'),
     'key' => env('KADEE_KEY'),
-    'endpoint' => env('KADEE_ENDPOINT', 'https://kadee.io/api/ingest'),
+    'endpoint' => env('KADEE_ENDPOINT', 'https://usekadee.com/api/ingest'),
     'timeout' => env('KADEE_TIMEOUT', 5),
 ];
 ```
@@ -54,7 +49,8 @@ return [
 ## Requirements
 
 - PHP 8.2+
-- `spatie/flare-client-php` ^2.0
+- Laravel 11+
+- `spatie/laravel-flare` ^2.2
 
 ## License
 

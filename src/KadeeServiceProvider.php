@@ -12,13 +12,17 @@ class KadeeServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/kadee.php', 'kadee');
 
-        // Only configure if KADEE_KEY is set
-        if ($key = config('kadee.key')) {
+        // Only configure if both KADEE_PROJECT and KADEE_KEY are set
+        $project = config('kadee.project');
+        $key = config('kadee.key');
+
+        if ($project && $key) {
             config([
                 'flare.sender' => [
                     'class' => KadeeSender::class,
                     'config' => [
-                        'projectId' => $key,
+                        'projectId' => $project,
+                        'secret' => $key,
                         'endpoint' => config('kadee.endpoint'),
                         'timeout' => config('kadee.timeout'),
                     ],
