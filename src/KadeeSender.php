@@ -12,12 +12,21 @@ use Spatie\FlareClient\Senders\Support\Response;
 
 class KadeeSender implements Sender
 {
-    public function __construct(
-        private readonly string $projectId,
-        private readonly string $secret,
-        private readonly string $endpoint = 'https://usekadee.com/api/ingest',
-        private readonly int $timeout = 5,
-    ) {}
+    private readonly string $projectId;
+    private readonly string $secret;
+    private readonly string $endpoint;
+    private readonly int $timeout;
+
+    /**
+     * @param array{projectId: string, secret: string, endpoint?: string, timeout?: int} $config
+     */
+    public function __construct(array $config)
+    {
+        $this->projectId = $config['projectId'];
+        $this->secret = $config['secret'];
+        $this->endpoint = $config['endpoint'] ?? 'https://usekadee.com/api/ingest';
+        $this->timeout = $config['timeout'] ?? 5;
+    }
 
     public function post(
         string $endpoint,
