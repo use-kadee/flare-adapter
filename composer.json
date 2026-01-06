@@ -28,6 +28,9 @@
             "Kadee\\FlareAdapter\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "test": "pest"
+    },
     "extra": {
         "laravel": {
             "providers": [
