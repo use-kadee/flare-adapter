@@ -13,13 +13,17 @@ class KadeeServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/kadee.php', 'kadee');
 
-        // Extend FlareConfig to use Kadee sender
-        $this->app->extend(FlareConfig::class, function (FlareConfig $config) {
+        // Modify FlareConfig after it's resolved to use Kadee sender
+        // We use resolving() because FlareServiceProvider creates the config
+        // directly and stores it, then registers a singleton that returns it.
+        // Using extend() wouldn't work because the singleton is never resolved
+        // by FlareServiceProvider itself.
+        $this->app->resolving(FlareConfig::class, function (FlareConfig $config) {
             $project = config('kadee.project');
             $key = config('kadee.key');
 
             if (! $project || ! $key) {
-                return $config;
+                return;
             }
 
             $config->sender = KadeeSender::class;
@@ -29,8 +33,30 @@ class KadeeServiceProvider extends ServiceProvider
                 'endpoint' => config('kadee.endpoint'),
                 'timeout' => config('kadee.timeout'),
             ];
+        });
 
-            return $config;
+        // Also modify the config directly if it's already been created
+        // This handles the case where FlareServiceProvider ran first
+        $this->app->booted(function () {
+            if (! $this->app->bound(FlareConfig::class)) {
+                return;
+            }
+
+            $project = config('kadee.project');
+            $key = config('kadee.key');
+
+            if (! $project || ! $key) {
+                return;
+            }
+
+            $config = $this->app->make(FlareConfig::class);
+            $config->sender = KadeeSender::class;
+            $config->senderConfig = [
+                'projectId' => $project,
+                'secret' => $key,
+                'endpoint' => config('kadee.endpoint'),
+                'timeout' => config('kadee.timeout'),
+            ];
         });
     }
 
