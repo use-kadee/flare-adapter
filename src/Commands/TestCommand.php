@@ -80,32 +80,27 @@ class TestCommand extends Command
     private function buildTestPayload(Exception $exception): array
     {
         return [
-            'notifier' => 'Kadee Flare Adapter Test',
-            'language' => 'php',
-            'framework_version' => app()->version(),
-            'language_version' => PHP_VERSION,
-            'exception_class' => get_class($exception),
-            'seen_at' => now()->timestamp,
+            'exceptionClass' => get_class($exception),
             'message' => $exception->getMessage(),
+            'seenAtUnixNano' => (int) (microtime(true) * 1_000_000_000),
             'stacktrace' => [
                 [
                     'file' => $exception->getFile(),
-                    'line_number' => $exception->getLine(),
+                    'lineNumber' => $exception->getLine(),
                     'method' => 'handle',
                     'class' => self::class,
-                    'code_snippet' => [],
+                    'codeSnippet' => [],
                     'arguments' => [],
-                    'is_application_frame' => true,
+                    'isApplicationFrame' => true,
                 ],
             ],
-            'context' => [
-                'env' => [
-                    'laravel_version' => app()->version(),
-                    'php_version' => PHP_VERSION,
-                ],
+            'attributes' => [
+                'laravel.version' => app()->version(),
+                'php.version' => PHP_VERSION,
             ],
-            'stage' => config('app.env', 'local'),
-            'application_path' => base_path(),
+            'events' => [],
+            'trackingUuid' => null,
+            'applicationPath' => base_path(),
         ];
     }
 }
