@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Kadee\FlareAdapter;
 
 use Illuminate\Support\ServiceProvider;
+use Spatie\FlareClient\Disabled\DisabledFlare;
+use Spatie\FlareClient\Flare;
+use Spatie\FlareClient\Recorders\ApplicationRecorder\ApplicationRecorder;
+use Spatie\FlareClient\Tracer;
+use Spatie\LaravelFlare\FlareConfig;
+use Spatie\LaravelFlare\FlareServiceProvider;
 
 class KadeeServiceProvider extends ServiceProvider
 {
@@ -35,6 +41,25 @@ class KadeeServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $project = config('kadee.project');
+        $key = config('kadee.key');
+
+        // If Flare was disabled (loaded before us), re-enable it
+        if ($project && $key) {
+            $flare = $this->app->make(Flare::class);
+            if ($flare instanceof DisabledFlare) {
+                // Force unbind the disabled classes
+                $this->app->offsetUnset(Flare::class);
+                $this->app->offsetUnset(FlareConfig::class);
+                $this->app->offsetUnset(Tracer::class);
+                $this->app->offsetUnset(ApplicationRecorder::class);
+
+                // Re-register FlareServiceProvider to pick up our config
+                $provider = new FlareServiceProvider($this->app);
+                $provider->register();
+            }
+        }
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Commands\TestCommand::class,
