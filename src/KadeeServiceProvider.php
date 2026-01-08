@@ -18,6 +18,8 @@ class KadeeServiceProvider extends ServiceProvider
 
         if ($project && $key) {
             config([
+                // Enable Flare if no key is set (Flare disables itself without a key)
+                'flare.key' => config('flare.key') ?: $project,
                 'flare.sender' => [
                     'class' => KadeeSender::class,
                     'config' => [
